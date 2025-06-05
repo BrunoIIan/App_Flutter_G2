@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../widgets/frase_card.dart';
 import '../widgets/botao_refresh.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -11,6 +12,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Color backgroundColor = Colors.black;
+
   String frase = 'Clique no botão para ver uma frase.';
   bool carregando = false;
 
@@ -38,10 +41,38 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void escolherCorFundo() {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Text('Escolha a cor de fundo'),
+            content: SingleChildScrollView(
+              child: ColorPicker(
+                pickerColor: backgroundColor,
+                onColorChanged: (Color cor) {
+                  setState(() {
+                    backgroundColor = cor;
+                  });
+                },
+                showLabel: false,
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: Text('Fechar'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Frase do Dia')),
+      backgroundColor: backgroundColor,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -62,6 +93,12 @@ class _HomePageState extends State<HomePage> {
                         },
                         icon: Icon(Icons.copy),
                         label: Text("Copiar Frase"),
+                      ),
+                      SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        onPressed: escolherCorFundo,
+                        icon: Icon(Icons.color_lens),
+                        label: Text("Cor de Fundo"),
                       ),
                     ],
                   ),
